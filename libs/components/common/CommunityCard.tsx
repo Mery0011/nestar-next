@@ -15,10 +15,11 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 interface CommunityCardProps {
 	boardArticle: BoardArticle;
 	size?: string;
+	likeArticleHandler: any;
 }
 
 const CommunityCard = (props: CommunityCardProps) => {
-	const { boardArticle, size = 'normal' } = props;
+	const { boardArticle, size = 'normal', likeArticleHandler } = props;
 	const device = useDeviceDetect();
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
@@ -50,7 +51,7 @@ const CommunityCard = (props: CommunityCardProps) => {
 			<Stack
 				sx={{ width: size === 'small' ? '285px' : '317px' }}
 				className="community-general-card-config"
-				onClick={(e) => chooseArticleHandler(e, boardArticle)}
+				onClick={(e: React.SyntheticEvent) => chooseArticleHandler(e, boardArticle)}
 			>
 				<Stack className="image-box">
 					<img src={imagePath} alt="" className="card-img" />
@@ -59,36 +60,57 @@ const CommunityCard = (props: CommunityCardProps) => {
 					<Stack>
 						<Typography
 							className="desc"
-							onClick={(e) => {
+							onClick={(e: React.SyntheticEvent) => {
 								e.stopPropagation();
 								goMemberPage(boardArticle?.memberData?._id as string);
 							}}
 						>
 							{boardArticle?.memberData?.memberNick}
 						</Typography>
-						<Typography className="title">{boardArticle?.articleTitle}</Typography>
+
+						<Typography className="title">
+							{boardArticle?.articleTitle}
+						</Typography>
 					</Stack>
+
 					<Stack className={'buttons'}>
 						<IconButton color={'default'}>
 							<RemoveRedEyeIcon />
 						</IconButton>
-						<Typography className="view-cnt">{boardArticle?.articleViews}</Typography>
-						<IconButton color={'default'}>
+
+						<Typography className="view-cnt">
+							{boardArticle?.articleViews}
+						</Typography>
+
+						<IconButton
+							color={'default'}
+							onClick={(e: React.SyntheticEvent) => {
+								e.stopPropagation();
+								likeArticleHandler(e, user, boardArticle?._id);
+							}}
+						>
 							{boardArticle?.meLiked && boardArticle?.meLiked[0]?.myFavorite ? (
 								<FavoriteIcon color={'primary'} />
 							) : (
 								<FavoriteBorderIcon />
 							)}
 						</IconButton>
-						<Typography className="view-cnt">{boardArticle?.articleLikes}</Typography>
+
+						<Typography className="view-cnt">
+							{boardArticle?.articleLikes}
+						</Typography>
 					</Stack>
 				</Stack>
+
 				<Stack className="date-box">
 					<Moment className="month" format={'MMMM'}>
 						{boardArticle?.createdAt}
 					</Moment>
+
 					<Typography className="day">
-						<Moment format={'DD'}>{boardArticle?.createdAt}</Moment>
+						<Moment format={'DD'}>
+							{boardArticle?.createdAt}
+						</Moment>
 					</Typography>
 				</Stack>
 			</Stack>
